@@ -223,7 +223,7 @@ function useAntdResizableHeader<ColumnsType extends UARHColumnType = UARHColumnT
       for (let i = 0; i < cls.length; i++) {
         if (cls[i].children) {
           loop(cls[i].children as ColumnsType[])
-        } else if (!cls[i].hideInTable || columnsState?.value?.[cls[i].dataIndex]?.show !== false) {
+        } else if (!cls[i].hideInTable && columnsState?.value?.[cls[i].dataIndex]?.show !== false) {
           width += Number(cls[i].width) || defaultWidth
         }
       }
