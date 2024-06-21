@@ -11,6 +11,17 @@ import { useSafeState } from './utils/useSafeState'
 import { useUpdateThrottleEffect } from './utils/useUpdateThrottleEffect'
 import { validateColumnsFlex } from './utils/validateOptions'
 
+export type ColumnsState = {
+  show?: boolean
+  fixed?: 'right' | 'left' | undefined
+  order?: number
+  disable?:
+    | boolean
+    | {
+        checkbox: boolean
+      }
+}
+
 export interface ColumnsStateType {
   /**
    * 持久化的类型，支持 localStorage 和 sessionStorage
@@ -21,6 +32,7 @@ export interface ColumnsStateType {
   persistenceType?: 'localStorage' | 'sessionStorage'
   /** 持久化的key，用于存储到 storage 中 */
   persistenceKey?: string
+  value?: Record<string, ColumnsState>
 }
 
 export interface OptionsType<ColumnsType extends Record<string, any> = Record<string, any>> {
@@ -211,13 +223,13 @@ function useAntdResizableHeader<ColumnsType extends UARHColumnType = UARHColumnT
       for (let i = 0; i < cls.length; i++) {
         if (cls[i].children) {
           loop(cls[i].children as ColumnsType[])
-        } else if (!cls[i].hideInTable) {
+        } else if (!cls[i].hideInTable || columnsState.value?.[cls[i].dataIndex]?.show !== false) {
           width += Number(cls[i].width) || defaultWidth
         }
       }
     })(resizableColumns)
     setTableWidth(width)
-  }, [defaultWidth, resizableColumns])
+  }, [defaultWidth, resizableColumns, columnsState])
 
   const { run: debounceRender } = useDebounceFn(forceRender)
 
